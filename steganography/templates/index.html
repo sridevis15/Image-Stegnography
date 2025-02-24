@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Stegnography</title>
+    <style>
+        :root {
+            --primary-color: #4B0082;
+            --secondary-color: #2ecc71;
+            --background-color:#b6b6ff;
+            --text-color: #34495e;
+            --error-color: #e74c3c;
+            --success-color: #27ae60;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 2rem;     /* 1 Rem = 16 px */
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        h1, h2 {
+            text-align: center;
+            color: var(--primary-color);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+        }
+
+        input[type="file"],     /* Styles apply to both file and text input fields  */
+        input[type="text"],
+        textarea {
+            width: 97%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+
+        textarea {
+            height: 100px;
+            resize: vertical;
+        }
+
+        .btn {
+            display: inline-block;
+            background-color: var(--primary-color);
+            color: #ffffff;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.3s ease;
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 1rem; /* Optional: Adds spacing */
+        }
+
+        .btn:hover {
+            background-color: #bd61ff;
+        }
+
+        .message {
+            text-align: center;
+            margin: 1rem 0;
+            padding: 1rem;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+
+        .success {
+            background-color: var(--success-color);
+            color: #ffffff;
+        }
+
+        .error {
+            background-color: var(--error-color);
+            color: #ffffff;
+        }
+
+        .divider {
+            border-top: 1px solid #ddd;
+            margin: 2rem 0;
+        }
+
+        .download-link {
+            display: inline-block;
+            background-color: var(--secondary-color);
+            color: #ffffff;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            text-decoration: none;
+            transition: background-color 0.3s ease;
+        }
+
+        .download-link:hover {
+            background-color: #27ae60;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Image Steganography</h1>
+        
+        {% if success %}
+            <div class="message success">{{ success }}</div>
+        {% endif %}
+        {% if error %}
+            <div class="message error">{{ error }}</div>
+        {% endif %}
+        
+        <h2>Encrypt Message</h2>
+        <form action="" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="image">Select Image:</label>
+                <input type="file" id="image" name="image" accept="image/*" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="message">Enter Secret Message:</label>
+                <textarea id="message" name="message" required></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label for="passcode">Enter Password:</label>
+                <input type="text" id="passcode" name="passcode" required>
+            </div>
+            <div class="button-container">
+                <button type="submit" name="encode_button" class="btn">Encrypt & Download</button>
+            </div>
+        </form>
+
+        {% if image %}
+            <div class="message success">
+                Your encrypted image is ready: <a href="{{ image }}" class="download-link" download>Download Now</a>
+            </div>
+        {% endif %}
+
+        <div class="divider"></div>
+
+        <h2>Decrypt Message</h2>
+        <form action="" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="decrypt-image">Select Image:</label>
+                <input type="file" id="decrypt-image" name="image" accept="image/*" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="decrypt-pass">Enter Password:</label>
+                <input type="text" id="decrypt-pass" name="pass" required>
+            </div>
+            <div class="button-container">
+                <button type="submit" name="decode_button" class="btn">Decrypt</button>
+            </div>
+        </form>
+
+        {% if message %}
+            <div class="message {% if message == 'Incorrect passcode' %}error{% else %}success{% endif %}">
+                {{ message }}
+            </div>
+        {% endif %}
+    </div>
+</body>
+</html>
